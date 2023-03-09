@@ -1,5 +1,5 @@
 use std::io;
-use std::fs::File;
+use std::fs::{File, self};
 use xml::reader::{XmlEvent, EventReader};
 
 fn read_xml(file_path: &str) -> io::Result<String> {
@@ -15,7 +15,13 @@ fn read_xml(file_path: &str) -> io::Result<String> {
     Ok(content)
 }
 
-fn main() {
-    let file_path = "docs.gl/gl4/glClear.xhtml";
-    println!("{content}", content=read_xml(file_path).expect("TODO"));
+fn main() -> io::Result<()> {
+    //let file_path = "docs.gl/gl4/glClear.xhtml";
+    let dir_path = "docs.gl/gl4";
+    //println!("{content}", content=read_xml(file_path).expect("TODO"));
+    let dir = fs::read_dir(dir_path)?;
+    for file in dir {
+        println!("{file:?}", file=file?.path());
+    }
+    Ok(())
 }
