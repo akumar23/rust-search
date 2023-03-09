@@ -1,16 +1,21 @@
+use std::io;
 use std::fs::File;
-use std::process::exit;
-use xml::reader::EventReader;
+use xml::reader::{XmlEvent, EventReader};
+
+fn read_xml(file_path: &str) -> io::Result<String> {
+    let file = File::open(file_path)?;
+    let er = EventReader::new(file);
+    let mut content = String::new();
+    for event in er.into_iter() {
+        if let XmlEvent::Characters(text) = event.expect("TODO") {
+            content.push_str(&text);
+        }
+    }
+
+    Ok(content)
+}
 
 fn main() {
     let file_path = "docs.gl/gl4/glClear.xhtml";
-    let file = File::open("docs.gl/gl4/glClear.xhtml").unwrap_or_else(|err| {
-        eprintln!("ERROR: could not read file {file_path}: {err}");
-        exit(1)
-    });
-    let er = EventReader::new(file);
-
-    for event in er.into_iter() {
-        println!("{event:?}");
-    }
+    println!("{content}", content=read_xml(file_path).expect("TODO"));
 }
